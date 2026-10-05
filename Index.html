@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Il tema natale di Veronica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;1,400&family=Work+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --ink: #14121f;
+    --ink-edge: #2c2843;
+    --gold: #c3a15a;
+    --parchment: #ffe2a3;
+    --plum-text: #2a2319;
+    --plum-sub: #492613;
+  }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background: var(--ink);
+    font-family: 'Montserrat';
+    padding: 40px 20px 56px;
+  }
+
+  /* ---------- pulsante "torna alla copertina" ---------- */
+
+  .home-link{
+    display:block;
+    text-align:center;
+    margin: 0 auto 30px;
+    font-family:'Work Sans', sans-serif;
+    font-size: 0.82rem;
+    color: rgba(195,161,90,0.75);
+    background: none;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+  }
+  .home-link:hover{ color: var(--gold); }
+
+  /* ---------- etichette sopra i menu ---------- */
+
+  .menu-label{
+    text-align:center;
+    font-family:'Work Sans', sans-serif;
+    font-size: 0.78rem;
+    color: #8a83a0;
+    margin: 0 0 12px;
+  }
+
+  /* ---------- i due menu ---------- */
+
+  .menu{
+    display:flex;
+    flex-wrap: wrap;
+    justify-content:center;
+    gap: 10px;
+    max-width: 640px;
+    margin: 0 auto 30px;
+  }
+
+  .menu button{
+    font-family:'Work Sans', sans-serif;
+    font-size: 1rem;
+    border: 1px solid var(--ink-edge);
+    background: transparent;
+    color: var(--gold);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+  }
+
+  .menu button:hover{ transform: translateY(-2px); }
+
+  .menu button.active{
+    background: var(--gold);
+    color: var(--ink);
+    border-color: var(--gold);
+  }
+
+  /* pulsanti pianeti: cerchi */
+  #menuPianeti button{
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    font-size: 1.05rem;
+  }
+
+  /* pulsanti aspetti: pillole rettangolari, più larghe */
+  #menuAspetti button{
+    height: 40px;
+    padding: 0 14px;
+    border-radius: 20px;
+    font-size: 0.92rem;
+  }
+
+  .menu-aspetti-wrap{
+    margin-bottom: 44px;
+  }
+
+  /* ---------- lo stage con la carta ---------- */
+
+  .stage{
+    display:flex;
+    justify-content:center;
+  }
+
+  .card-slot{
+    width: 300px;
+    max-width: 82vw;
+    aspect-ratio: 5 / 7.6;
+    perspective: 1800px;
+    cursor: pointer;
+  }
+
+  .card{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.7s cubic-bezier(.22,.68,.2,1.02);
+  }
+
+  .card-slot.flipped .card{
+    transform: rotateY(180deg);
+  }
+
+  .face{
+    position:absolute;
+    inset:0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 6px;
+    display:flex;
+    flex-direction: column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding: 28px;
+    box-shadow: 0 18px 40px -12px rgba(0,0,0,0.6);
+  }
+
+  .face-front{
+    background: linear-gradient(160deg, #1d1a2c 0%, var(--ink) 65%);
+    border: 1px solid var(--ink-edge);
+  }
+
+  .face-back{
+    background: var(--parchment);
+    color: var(--plum-text);
+    transform: rotateY(180deg);
+    align-items:flex-start;
+    text-align:left;
+  }
+
+  .front-glyphs{
+    font-size: 2.2rem;
+    color: var(--gold);
+    margin-bottom: 18px;
+  }
+
+  .front-title{
+    font-family:'Adam';
+    font-size: 1.2rem;
+    color: #f4efe0;
+    margin: 0 0 14px;
+  }
+
+  .front-teaser{
+    font-family:'Fraunces', serif;
+    font-style: italic;
+    font-size: 0.92rem;
+    color: #b8b2c9;
+    margin: 0;
+  }
+
+  .front-hint{
+    position:absolute;
+    bottom: 18px;
+    font-size: 0.7rem;
+    color: rgba(195,161,90,0.5);
+  }
+
+  .back-eyebrow{
+    font-size: 1rem;
+    color: var(--plum-sub);
+    margin: 12 0 12px;
+    text-align:center
+  }
+
+  .back-phrase{
+    font-family:'Fraunces', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    margin: 0 0 14px;
+  }
+
+  .back-list{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    gap: 9px;
+  }
+
+  .back-list li{
+    position:relative;
+    padding-left: 14px;
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
+  .back-list li::before{
+    content:'';
+    position:absolute;
+    left:0; top:0.5em;
+    width:5px; height:5px;
+    border-radius:50%;
+    background:#8a6a3a;
+  }
+
+</style>
+</head>
+<body>
+
+  <button class="home-link" id="homeLink">✦ Tema natale di veronica ✦</button>
+
+  <p class="menu-label">I pianeti nei segni</p>
+  <div class="menu" id="menuPianeti"></div>
+
+  <div class="menu-aspetti-wrap">
+    <p class="menu-label">Come si influenzano tra loro</p>
+    <div class="menu" id="menuAspetti"></div>
+  </div>
+
+  <div class="stage">
+    <div class="card-slot" id="cardSlot">
+      <div class="card">
+        <div class="face face-front">
+          <div class="front-glyphs" id="frontGlyphs"></div>
+          <h2 class="front-title" id="frontTitle"></h2>
+          <p class="front-teaser" id="frontTeaser"></p>
+          <div class="front-hint">tocca per scoprire</div>
+        </div>
+        <div class="face face-back">
+          <p class="back-eyebrow" id="backEyebrow"></p>
+          <p class="back-phrase" id="backPhrase"></p>
+          <ul class="back-list" id="backList"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+
+  // ============================================
+  // CARTA INTRODUTTIVA — quella che si vede aprendo la pagina
+  // ============================================
+
+  const intro = {
+    glyph: "♑ ♐",
+    title: "Il tema natale di VERONICA",
+    teaser: "Ogni carta racconta un tema. Tocca per girarla e leggere cosa c'è dietro.",
+    eyebrow: "Come leggere questo mazzo",
+    phrase: "Sole in Capricorno, Luna in Cancro, Ascendente Sagittario.",
+    bullets: [
+      "Il primo menu racconta i grandi temi legati ai pianeti, uno per uno",
+      "Il secondo menu racconta come questi temi dialogano tra loro, negli aspetti",
+      "Non c'è un ordine giusto: puoi partire da dove preferisci"
+    ]
+  };
+
+  // ============================================
+  // I 12 PIANETI/TEMI — modifica i testi qui, senza toccare il resto
+  // ============================================
+
+  const pianeti = [
+    {
+      glyph: "☉",
+      title: "Chi sei quando ti presenti",
+      teaser: "Cosa mostri di te prima ancora di aprire bocca?",
+      eyebrow: "Sole in Capricorno, 1ª casa — Ascendente Sagittario",
+      phrase: "Mi affermo con i fatti, non con le parole.",
+      bullets: [
+        "Si presenta come pragmatica, seria e controllata fin dal primo momento",
+        "L'Ascendente Sagittario aggiunge un lato diretto e spontaneo, che vivacizza la serietà di fondo",
+        "La 1ª casa coinvologe questi due aspetti nel modo in cui manifesta la propria identità"
+      ]
+    },
+    {
+      glyph: "☿",
+      title: "Come pensi e comunichi",
+      teaser: "Cosa succede quando qualcuno critica una tua idea?",
+      eyebrow: "Mercurio in Capricorno, 1ª casa, congiunto al Sole",
+      phrase: "Penso con la mia testa.",
+      bullets: [
+        "Mente concreta, organizzata, orientata al risultato: poco incline a parlare a vuoto",
+        "La prima casa la fa identificare fortemente con le proprie idee e capacità di ragionamento",
+        "Fatica a separare una critica alle sue idee da una critica a lei stessa",
+        " Il sagittario la rende diretta e franca, ma raramente impulsiva: il capricorno prima filtra, poi parla"
+      ]
+    },
+    {
+      glyph: "♀",
+      title: "Come ami e cosa ti fa sentire valorizzata",
+      teaser: "Quanto ci vuole prima che ti lasci davvero andare con qualcuno?",
+      eyebrow: "Venere in Capricorno, 1ª casa, congiunta al Sole",
+      phrase: "Il mio valore personale e ciò che apprezzo sono strettamente legati alla mia identità",
+      bullets: [
+        "Selettiva e prudente in amore: osserva a lungo prima di fidarsi",
+        "Dimostra affetto con i fatti, non con gesti romantici o parole dolci",
+        "Ha standard elevati e prende i legami sul serio, una volta scelti",
+        "In prima casa può creare un fascino sobrio e composto, può essere naturalmente gradevole senza essere appariscente"
+      ]
+    },
+    {
+      glyph: "♂",
+      title: "Come agisci e cosa vuoi davvero",
+      teaser: "Cosa succede quando qualcuno prova a dirti cosa fare?",
+      eyebrow: "Marte in Capricorno, 1ª casa, in stretta congiunzione al Sole",
+      phrase: "Voglio agire, ottenere, affermarmi.",
+      bullets: [
+        "Grande autodisciplina, resistenza e capacità di perseguire obiettivi a lungo termine",
+        "Una rabbia controllata più che esplosiva: \"voglio questa cosa, come ci arrivo?\"",
+        "Difficoltà enorme a sentirsi impotente o dipendente dagli altri",
+        "Quando vuole davvero qualcosa, prima o poi se la prende — con determinazione, non aggressività"
+      ]
+    },
+    {
+      glyph: "☽",
+      title: "Cosa senti sotto il controllo",
+      teaser: "Mi sento bene quando sento che il rapporto con l'altro è al sicuro",
+      eyebrow: "Luna in Cancro, 7ª casa, in opposizione al Capricorno",
+      phrase: "Crea un asse io contro l'altro e autonomia contro bisogno emotivo.",
+      bullets: [
+        "Mondo interiore molto più morbido e sensibile di quello che lascia trasparire da fuori",
+        "Forte bisogno di sicurezza emotiva e attaccamento alle persone importanti",
+        "Fuori mostra il suo bisigno di autonima, dentro ha bisogno di sentirsi protetta e accolta emotivamente",
+        "la 7 casa riguarda le relazioni uno a uno, le relazioni hanno un peso enorme sul suo equilibio emotivo"
+      ]
+    },
+    {
+      glyph: "⚭",
+      title: "Chi governa le tue emozioni?",
+      teaser: "Chi sono e con chi mi relaziono sono profondamente legate",
+      eyebrow: "Cuspide 7ª casa in Gemelli, governata da Mercurio in Capricorno, 1ª casa",
+      phrase: "La mente governa le emozioni.",
+      bullets: [
+        "Nelle relazioni contano moltissimo comunicazione, intelligenza e affidabilit e concretezza",
+        "Ciò che cerca in un partner può non coincidere con ciò che la fa sentire amata",
+        "Chiedere aiuto le pesa più del dovuto: \"non voglio aver bisogno, devo bastare a me stessa\""
+      ]
+    },
+    {
+      glyph: "♃",
+      title: "Come cresci e trovi la tua direzione",
+      teaser: "Da chi impari davvero qualcosa su te stessa?",
+      eyebrow: "Giove in Scorpione, 11ª casa — governatore dell'Ascendente Sagittario",
+      phrase: "Puoi essere forte e autonoma senza rinunciare ai legami.",
+      bullets: [
+        "Cresce attraverso esperienze intense e la comprensione psicologica delle persone",
+         "L'11 casa fa si che le amicizie abbiano un'importanza notevole sulla sua crescita",
+        "Cerca pochi legami profondi piuttosto che tante amicizie superficiali",
+        "Le persone che considera davvero \"sue\" pesano moltissimo sulla sua direzione di vita, ma non è facilmlente manipolabile"
+      ]
+    },
+   
+    {
+      glyph: "♄",
+      title: "Come organizzi i tuoi pensieri",
+      teaser: "Quanto pensi prima di dire davvero quello che pensi?",
+      eyebrow: "Saturno in Acquario, 3ª casa — governatore dello stellium in Capricorno",
+      phrase: "voglio costruire qualcosa di mio ma secondo le mie regole.",
+      bullets: [
+        "il governatore dello stellium capricorno è nella casa della mente e della comunicazione",
+        "La sua autonomia non è solo cavarsela da sola, ma anche arrivare alle proprie conclusioni",
+        "l'acquario tende a osservare e prendere le distanze, quindi pensa prima di parlare, con una serietà mentale sviluppata presto",
+        "Il sagittario la rende spontanea nel modo di parlare, ma dietro c'è una struttura molto organizzata"
+      ]
+    },
+    {
+      glyph: "♇",
+      title: "Ciò che tieni sotto controllo",
+      teaser: "Cosa c'è sotto una mente così organizzata?",
+      eyebrow: "Plutone in Scorpione, 12ª casa",
+      phrase: "Mi sento al sicuro solo se riesco a capire e controllare ciò che succede.",
+      bullets: [
+        "Sotto l'autocontrollo c'è un'intensità psichica molto forte, raramente mostrata",
+        "La 12 casa potrebbe portare contenuti molto profondi, difficili da razionalizzare, intensificate dallo scorpione nel suo domicilio",
+        "Ha una vita interiore intensa che la mente non riesce sempre a \"mettere in ordine\""
+      ]
+    },
+    {
+      glyph: "♅",
+      title: "I tuoi standard sul valore",
+      teaser: "Il tuo valore dipende solo da ciò che riesci a costruire?",
+      eyebrow: "Urano e Nettuno in Capricorno, 2ª casa",
+      phrase: "Non voglio dover dipendere da nessuno — ma non sono certa che il mio valore si misuri così.",
+      bullets: [
+        "Urano in 2 casa acuisce l'idea di essere economicamente e materialemnete indipendente",
+        "Nettuno tende a idealizzare e rendere difficilie attibuire valore a qualcosa a lei importante",
+        "Il Capricorno non è sognatore e basa il suo valore su ciò che costruisce concretamente",
+        "Nettuno si chiede, e se il mio valore non fosse determinato solo da ciò che riesco a fare?"
+      ]
+    },
+    {
+      glyph: "⚷",
+      title: "La ferita da guarire",
+      teaser: "Cosa nascondi sotto il bisogno di fare sempre tutto bene?",
+      eyebrow: "Chirone in Vergine, 9ª casa, retrogrado",
+      phrase: "Devo capire tutto per potermi fidare di me stessa.",
+      bullets: [
+        "Anche dopo un risultato, il primo pensiero è \"potevo fare meglio\"",
+        "La perfezione nella ricerca personale della propria visione e del proprio significato",
+        "Questo dialogo resta quasi sempre interno: raramente lo mette in parole",
+        "Sa perfettamente come costruire una vita concreta deve imparare a non dover controllare ogni aspetto di essa"
+      ]
+    },
+        {
+      glyph: "⚸",
+      title: "Il rifiuto di piegarsi",
+      teaser: "Quanto sono bloccata dalle mie radici?",
+      eyebrow: "Lilith in Ariete, 4ª casa",
+      phrase: "Ho bisogno di avere un mio spazio privato.",
+      bullets: [
+        "Le aspettative familiari potrebbero aver creato una forte reazione percepite come limitanti",
+        "In famiglia potrebbe aver dovuto conquistarsi lo spazio per essere se stessa",
+        "non per forza conflitto familiare ma volontà di essere totalmente se stessa nei suoi spazi",
+        "L'autodeterminismo estremamente profondo"
+      ]
+    },
+    {
+      glyph: "☊",
+      title: "Dove ti stai dirigendo",
+      teaser: "Cosa pensi davvero, al di là di quello che pensano gli altri?",
+      eyebrow: "Nodo Nord in Sagittario, 12ª casa, congiunto all'Ascendente",
+      phrase: "Al di là di queste prospettive, cosa penso davvero io?",
+      bullets: [
+        "Tende a occuparsi di ciò che arriva dall'esterno nel quotidiano, adattandosi alle situazioni senza arrivare a una sintesi personale",
+        "Il suo sviluppo in sagittario va verso il fidarsi della propria visione interiore, del proprio intuito e ciò che pensa abbia senso per se",
+        "Costruire un'identità autentica passa anche dal permettersi libertà ed esplorazione"
+      ]
+    }
+  ];
+
+  // ============================================
+  // I 9 ASPETTI — come i pianeti "dialogano" tra loro
+  // ============================================
+
+  const aspetti = [
+   {
+      glyph: "Stellium ♑",
+      title: "Identitò, amore, azione e mente filtrate dalla stessa energia",
+      teaser: "Il tema fortissimo tema dell 'IO'",
+      eyebrow: "Sole, Marte, Venere e Mercurio, in Capricorno, 1ª casa",
+      phrase: "Devo costruire qualcosa di mio.",
+      bullets: [
+       "Autodeterminazione, affermazione personale e bisogno di essere padrona delle proprie scelte",
+    "Potrebbe avere difficoltà a lasciarsi andare perchè quattro funzioni fondamentali sono concentrate in una struttura capricornina",
+    "È brava a gestire se stessa ma non mollare il controllo nelle mani di qualcun altro"
+      ]
+    },
+  {
+      glyph: "☉ ☌ ♂",
+      title: "Volontà e identità fuse",
+      teaser: "Cosa succede quando la tua volontà e la tua identità coincidono?",
+      eyebrow: "Sole e Marte quasi sullo stesso grado, in Capricorno, 1ª casa",
+      phrase: "Quando voglio qualcosa, non mi passa facilmente.",
+      bullets: [
+        "Volontà, identità, iniziativa e assertività si fondono in un'unica spinta",
+        "Grande energia e resistenza alle difficoltà, ma anche bisogno costante di autonomia",
+        "Quando qualcuno le dice cosa fare potrebbe toccare un nervo scoperto"
+      ]
+    },
+    {
+      glyph: "☽ ☍ ♂",
+      title: "Senti, reagisci, ti richiudi",
+      teaser: "Cosa fai davvero quando ti senti ferita?",
+      eyebrow: "Luna in Cancro, 7ª casa, in opposizione a Marte in Capricorno, 1ª casa",
+      phrase: "Sento tantissimo, reagisco, poi cerco di riprendere il controllo.",
+      bullets: [
+        "Quando si sente ferita o minacciata, l'emozione si trasforma spesso in azione, irritazione o chiusura",
+        "Marte in Capricorno è orientato all'autocontrollo, quindi la reazione raramente è esplosiva",
+        "Il bisogno emotivo dietro resta comunque reale, anche quando fuori sembra tutto sotto controllo"
+      ]
+    },
+    {
+      glyph: "☽ ☍ ☿",
+      title: "Quello che senti contro quello che capisci",
+      teaser: "Ti è mai capitato di spiegarti un'emozione invece di sentirla?",
+      eyebrow: "Luna in Cancro, 7ª casa, in opposizione (larga) a Mercurio in Capricorno, 1ª casa",
+      phrase: "Quella cosa mi ha dato fastidio perché, oggettivamente...",
+      bullets: [
+        "Tendenza a razionalizzare le emozioni invece di sentirle e basta",
+        "Pensieri lucidi sugli altri e sulle situazioni, ma quando qualcosa la tocca personalmente capire cosa prova richiede più tempo",
+        "Sotto un \"mi ha dato fastidio perché...\" c'è spesso, più semplicemente, un \"mi ha ferita\""
+      ]
+    },
+    {
+      glyph: "☽ ☍ ♀",
+      title: "Ciò che cerchi contro ciò di cui hai bisogno",
+      teaser: "Ciò che desideri coincide con quello di cui hai davvero bisogno?",
+      eyebrow: "Luna in Cancro, 7ª casa, in opposizione a Venere in Capricorno, 1ª casa",
+      phrase: "Ciò che apprezzo in un partner non sempre è ciò che mi fa sentire emotivamente sicura.",
+      bullets: [
+        "Venere in Capricorno apprezza una persona forte, affidabile, autonoma",
+        "La Luna in Cancro invece desidera qualcuno caldo, presente, rassicurante",
+        "razionalmente vorrebbe non aver bisogno di nessuno e contemporaneamente aver bisogno che le persone che ama siano vicine ",
+      ]
+    },
+    {
+      glyph: "♃ △ ☽",
+      title: "Una parte più calda di quello che sembra",
+      teaser: "Da dove viene la tua generosità con le persone a cui vuoi bene?",
+      eyebrow: "Giove in Scorpione, 11ª casa, trigono alla Luna in Cancro, 7ª casa — entrambi in segni d'acqua",
+      phrase: "Con chi si sente sicura, si fida e si apre completamente.",
+      bullets: [
+        "Amplifica generosità emotiva e capacità di prendersi cura e creare legami profondi con le persone care",
+        "Amicizie (11ª casa) e legami importanti (7ª casa) si intrecciano: chi considera \"suo\" lo tiene stretto",
+        "Offre un ponte tra autonomia e bisogno di relazione: non deve scegliere per forza tra le due"
+      ]
+    },
+    {
+      glyph: "♃ ⚹ ☉",
+      title: "Una fiducia lucida, non ingenua",
+      teaser: "Come reagisci davanti a un obiettivo che sembra ancora lontano?",
+      eyebrow: "Giove in Scorpione, 11ª casa, sestile al Sole in Capricorno, 1ª casa",
+      phrase: "C'è lavoro da fare, ma posso farcela.",
+      bullets: [
+        "Capacità di vedere un obiettivo grande e costruire concretamente il percorso per arrivarci",
+        "Il capricorno può essere molto autocritico e prudente, concentrato su ciò che ancora manca da ottenere",
+        "Non ottimismo ingenuo: con Giove in Scorpione è più una fiducia combattiva",
+        "Conosce le proprie capacità, ma tende a non ostentarle"
+      ]
+    },
+    {
+      glyph: "♃ ⚹ ♂",
+      title: "Dall'entusiasmo all'azione",
+      teaser: "Cosa fai quando qualcosa ti entusiasma davvero?",
+      eyebrow: "Giove in Scorpione, 11ª casa, sestile a Marte in Capricorno, 1ª casa",
+      phrase: "Ho un obiettivo, credo sia possibile, sono disposta a lavorarci.",
+      bullets: [
+        "Buona capacità di trasformare l'entusiasmo in azione concreta, non solo desiderio",
+        "Le amicizie (11ª casa) spesso facilitano questo passaggio dall'idea al fare",
+        "Marte in Capricorno è molto controllato rende l'azione strategica, non impulsiva"
+      ]
+    },
+    {
+      glyph: "♄ □ ♇",
+      title: "Controllo contro trasformazione",
+      teaser: "Cosa succede dentro di te quando qualcuno prova a cambiarti?",
+      eyebrow: "Saturno in Acquario, 3ª casa, quadrato a Plutone in Scorpione, 12ª casa",
+      phrase: "Mi sento al sicuro se riesco a capire e controllare ciò che succede.",
+      bullets: [
+        "Sotto l'autocontrollo razionale c'è un'intensità psichica molto più profonda",
+        "Tende a irrigidirsi quando sente che qualcuno sta cercando di imporle un cambiamento",
+        "Questa tensione arriva anche a Sole, Mercurio, Venere e Marte, che Saturno governa, devo avere il controllo di me stessa contro i processi inconsci che si possono seplicemente mettere in ordine"
+      ]
+    },
+     {
+      glyph: "♃ Asc",
+      title: "La ricerca del futuro",
+      teaser: "Quanto peso dai alla dinamica \"dove sto andando\"?",
+      eyebrow: "Giove in Scorpione, 11ª casa — governatore dell'Ascendente Sagittario",
+      phrase: "Dove sto andando?",
+      bullets: [
+        "L'11ª casa non parla solo di amicizie ma anche di progetti e speranze future: la domanda sul proprio percorso è sempre presente",
+        "Essendo il governatore dell'Ascendente in Scorpione, questa ricerca di direzione non è mai leggera o lineare, ma passa attraverso intensità e profondità",
+        "Potrebbe avere aspirazioni molto profonde ma difficili da mettere a fuoco o raccontare a parole: più uno stato che un piano preciso",
+      ]
+    },
+    {
+      glyph: "☊ ☌ Asc",
+      title: "La direzione più autentica",
+      teaser: "Al di là di quello che pensano gli altri, tu cosa pensi davvero?",
+      eyebrow: "Nodo Nord in Sagittario, 12ª casa, congiunto all'Ascendente",
+      phrase: "Voglio trovare la mia verità, non solo continuare a raccogliere quella degli altri.",
+      bullets: [
+              "Rende la costruzione di un'identità autentica uno dei grandi temi della sua vita",
+              "l'autenticià attraverso qualità sagittarine di libertà, autonomia, ricerca personale e bisogno di un senso"
+      ]
+    }
+  ];
+
+  // ============================================
+  // da qui in poi è la parte che fa funzionare tutto,
+  // non serve modificarla
+  // ============================================
+
+  const menuPianeti = document.getElementById('menuPianeti');
+  const menuAspetti = document.getElementById('menuAspetti');
+  const cardSlot = document.getElementById('cardSlot');
+
+  function riempiCarta(c){
+    document.getElementById('frontGlyphs').textContent = c.glyph;
+    document.getElementById('frontTitle').textContent = c.title;
+    document.getElementById('frontTeaser').textContent = c.teaser;
+    document.getElementById('backEyebrow').textContent = c.eyebrow;
+    document.getElementById('backPhrase').textContent = '"' + c.phrase + '"';
+
+    const lista = document.getElementById('backList');
+    lista.innerHTML = '';
+    c.bullets.forEach(function(testo){
+      const li = document.createElement('li');
+      li.textContent = testo;
+      lista.appendChild(li);
+    });
+
+    cardSlot.classList.remove('flipped');
+  }
+
+  function aggiornaMenuAttivo(tipo, indice){
+    document.querySelectorAll('#menuPianeti button').forEach(function(btn, i){
+      btn.classList.toggle('active', tipo === 'pianeta' && i === indice);
+    });
+    document.querySelectorAll('#menuAspetti button').forEach(function(btn, i){
+      btn.classList.toggle('active', tipo === 'aspetto' && i === indice);
+    });
+  }
+
+  function mostraIntro(){
+    riempiCarta(intro);
+    aggiornaMenuAttivo(null, null);
+  }
+
+  // crea i pulsanti dei pianeti
+  pianeti.forEach(function(c, i){
+    const btn = document.createElement('button');
+    btn.textContent = c.glyph;
+    btn.addEventListener('click', function(){
+      riempiCarta(c);
+      aggiornaMenuAttivo('pianeta', i);
+    });
+    menuPianeti.appendChild(btn);
+  });
+
+  // crea i pulsanti degli aspetti
+  aspetti.forEach(function(c, i){
+    const btn = document.createElement('button');
+    btn.textContent = c.glyph;
+    btn.addEventListener('click', function(){
+      riempiCarta(c);
+      aggiornaMenuAttivo('aspetto', i);
+    });
+    menuAspetti.appendChild(btn);
+  });
+
+  // pulsante "torna alla copertina"
+  document.getElementById('homeLink').addEventListener('click', mostraIntro);
+
+  // il click sulla carta la fa girare
+  cardSlot.addEventListener('click', function(){
+    this.classList.toggle('flipped');
+  });
+
+  // mostra la copertina all'apertura della pagina
+  mostraIntro();
+
+</script>
+
+</body>
+</html>
